@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<context:annotation-config></context:annotation-config>
+	<!-- <context:component-scan base-package="com.edoc.dao"></context:component-scan> -->
+	<context:component-scan base-package="com.edoc.service"></context:component-scan>
+
+	<context:property-placeholder location="classpath:database.properties"/>
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${driver}"></property>
+		<property name="jdbcUrl" value="${url}"></property>
+		<property name="user" value="${user}"></property>
+		<property name="password" value="${password}"></property>
+	
+		<!-- 配置连接池 -->
+		<!-- 初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+		<property name="initialPoolSize" value="3"></property>
+		<!-- 连接池中保留的最小连接数。Default: 3 -->
+		<property name="minPoolSize" value="3"></property>
+		<!-- 连接池中保留的最大连接数。Default: 15 -->
+		<property name="maxPoolSize" value="15"></property>
+		<!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+		<property name="acquireIncrement" value="3"></property>
+		<!-- 最大空闲时间，1800秒内未使用则连接被丢弃，若为0则永不丢弃。Default: 0 -->
+		<property name="maxIdleTime" value="1800"></property>
+		<!-- 获取连接超时的时间 -->
+		<property name="checkoutTimeout" value="10000" />
+		<!-- 获取连接失败时的重试次数 -->
+		<property name="acquireRetryAttempts" value="2" />	
+	</bean>
+	
+	<!-- 配置sqlsessionfactorybean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 当sql映射文件和对应的接口在一个包时可以不写下面这句话 -->
+		<!-- <property name="mapperLocations" value="classpath:com/dao/*.xml"></property> -->
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">	
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+		<property name="basePackage" value="com.edoc.dao"></property>
+	</bean>
+	
+	<!-- 事务属性配置 -->
+	<!-- 注册管理事务的类 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED"/>
+			<tx:method name="update*" propagation="REQUIRED"/>
+			<tx:method name="delete*" propagation="REQUIRED"/>
+			<tx:method name="*" propagation="SUPPORTS"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 配置切面 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.edoc.service..*.*(..))" id="pointcut"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut"/>
+	</aop:config>
+</beans>

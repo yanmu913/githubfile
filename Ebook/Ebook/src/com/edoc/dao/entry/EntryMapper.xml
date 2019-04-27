@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.edoc.dao.entry.EntryMapper">
+ 	<select id="find" resultMap="EntryResult" parameterType="map">
+ 		select * from edoc_entry
+ 		<where>
+ 		 	<if test="categoryid!=null and categoryid!=''">categoryid=#{categoryid}</if> 
+ 		 	<if test="id!=null and id!=''">id=#{id}</if> 
+ 		 </where>
+ 		limit #{start},#{pageSize}
+ 	</select>
+ 	<resultMap type="com.edoc.entity.Entry" id="EntryResult">
+ 		<id property="id" column="id"/>
+ 		<result property="categoryid" column="categoryid"/>
+ 		<result property="title" column="title"/>
+ 		<result property="summmary" column="summmary"/>
+ 		<result property="uploader" column="uploader"/>
+ 		<result property="createDate" column="createDate"/>
+ 	</resultMap>
+ 	
+ 	<select id="findCount" resultType="int" parameterType="map">
+ 		select count(id) from edoc_entry 
+ 		<where>
+ 			<if test="categoryid!=null">categoryid=#{categoryid}</if>
+ 		</where>
+ 	</select>
+ 	
+ 	<insert id="insert" parameterType="map">
+ 		INSERT INTO edoc_entry VALUES(DEFAULT,#{categoryid},#{title},#{summmary},#{uploader},#{createDate})
+ 	</insert>
+ 	
+ 	<update id="update" parameterType="map">
+ 		update edoc_entry 
+ 		<set>
+ 			<if test="title!=null">title=#{title},</if>
+ 			<if test="summmary!=null">summmary=#{summmary},</if>
+ 			<if test="uploader!=null">uploader=#{uploader},</if>
+ 		</set>
+ 		where id=#{id}
+ 	</update>
+ 	
+ 	<delete id="delete" parameterType="map">
+ 		delete from edoc_entry where id=#{id}
+ 	</delete>
+ </mapper>
