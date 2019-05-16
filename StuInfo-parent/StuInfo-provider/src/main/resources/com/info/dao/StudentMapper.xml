@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.info.dao.StudentMapper">
+ 	<select id="find" resultMap="studentResult">
+ 		select s.*,c.c_name className from student s inner join classes c on s.classId=c.c_id order by s.s_id
+ 	</select>
+ 	
+ 	
+ 	<resultMap type="com.info.entity.Classes" id="classesResult">
+ 		<id property="claId" column="c_id"/>
+ 		<result property="claName" column="className"/>
+ 	</resultMap>
+ 	<update id="update" parameterType="com.info.entity.Student" >
+		update student 
+		<set>
+ 			<if test="stuName!=null">s_name=#{stuName},</if>
+ 			<if test="stuBirthday!=null">s_birthday=#{stuBirthday},</if>
+ 			<if test="stuGender!=null">s_gender=#{stuGender},</if>
+ 			<if test="stuTelephone!=null">s_telephone=#{stuTelephone},</if>
+ 			<if test="stuEmail!=null">s_email=#{stuEmail},</if>
+ 			<if test="classId!=null">classId=#{classId},</if>
+ 		</set>
+ 		where s_id=#{stuId}
+ 	</update>
+ 	<resultMap type="com.info.entity.Student" id="studentResult">
+ 		<id property="stuId" column="s_id"/>
+ 		<result property="stuName" column="s_name"/>
+ 		<result property="stuBirthday" column="s_birthday"/>
+ 		<result property="stuGender" column="s_gender"/>
+ 		<result property="stuTelephone" column="s_telephone"/>
+ 		<result property="stuEmail" column="s_email"/>
+ 		<result property="classId" column="classId"/>
+ 		<association property="classes"  javaType="com.info.entity.Classes"  resultMap="classesResult"/>
+ 	</resultMap> 
+ </mapper>
