@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Classes implements Serializable{
 	private Integer claId;//班级id
 	private String claName;//班级名
-	private String telephone;
+	private String telephone;//电话号码
 	
 	
 	@Override
