@@ -1,6 +1,6 @@
 
 public class Grade {
-	private String gradeName;
+	private String gradeName;//年级名字
 	private Integer gid;
 	public String getGradeName() {
 		return gradeName;
