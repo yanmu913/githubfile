@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+	<package name="default" namespace="/account" extends="struts-default,json-default">
+		<action name="account_*" method="{1}"
+			class="com.banksystem.action.AccountAction">
+			<result name="loginFail" type="json">
+				<param name="includeProperties">
+					loginMes
+				</param>
+			</result>
+			<result name="loginSuccess" type="json">
+				<param name="includeProperties">
+					loginMes
+				</param>
+			</result>
+			<result name="transFail" type="json">
+				<param name="includeProperties">
+					transMes
+				</param>
+			</result>
+			<!-- <result name="transSuccess" type="json"> <param name="includeProperties"> 
+				transMes </param> </result> -->
+			<result name="transSuccess" type="chain">account_transfer</result>
+			<result name="ttransfer" type="chain">
+				<param name="actionName">transactionRecord_*</param>
+				<param name="namespace">/transactionRecord</param>
+				<param name="method">transfer</param>
+			</result>
+		</action>
+	</package>
+	<package name="default1" namespace="/transactionRecord"
+		extends="struts-default,json-default">
+		<action name="transactionRecord_*" method="{1}"
+			class="com.banksystem.action.TransactionRecordAction">
+			<result name="info">/pages/info.jsp</result>
+		</action>
+	</package>
+</struts>    
