@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+   <hibernate-mapping>
+   	<class name="com.banksystem.entity.transactionrecord.TransactionRecord" table="transactionRecord">
+   		<id name="tid" column="tid">
+   			<generator class="identity"></generator>
+   		</id>
+   		<property name="tcardNo" column="tcardNo"></property>
+   		<property name="transactionDate" column="transactionDate"></property>
+   		<property name="transactionAmount" column="transactionAmount"></property>
+   		<property name="tbalance" column="tbalance"></property>
+   		<property name="transactionType" column="transactionType"></property>
+   		<property name="remark" column="remark"></property>
+   	</class>
+   </hibernate-mapping> 
