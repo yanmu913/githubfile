@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<Account> select(String hql, Object... param) {
-		
+		System.out.println("--------------accountselect");
 		return accountDao.select(hql, param);
 	}
 

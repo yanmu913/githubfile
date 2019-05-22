@@ -7,13 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.SessionAware;
 
 import com.banksystem.entity.account.Account;
 import com.banksystem.service.AccountService;
 import com.opensymphony.xwork2.ActionSupport;
 
-public class AccountAction extends ActionSupport implements SessionAware {
+public class AccountAction extends ActionSupport implements SessionAware,ServletRequestAware {
 
 	private Account account;
 	
@@ -25,18 +26,24 @@ public class AccountAction extends ActionSupport implements SessionAware {
 	//转账信息
 	private String transMes;
 	private Map<String,Object> session;
+	
+	private HttpServletRequest servletRequest;
 	//
 	/**
 	 * 登录
 	 * @return
 	 */
 	public String login() {
+		String loginUser = servletRequest.getRemoteUser();
+		System.out.println("-----------------"+loginUser);
 		System.out.println("----------------account login");
 		System.out.println("account:" + account);
 		String hql = "from Account where cardNo=? ";
-
-		List<Account> accountList = accountService.select(hql, account.getCardNo());
-		System.out.println(accountList.size());
+		System.out.println(hql);
+		Object[] param = new Object[5];
+		param[0]=account.getCardNo();
+		List<Account> accountList = accountService.select(hql, param);
+		System.out.println("------------size：");
 		//验证卡号是否存在
 		if (accountList.size() != 1) {
 			loginMes = "登录失败！输入的卡号不存在";
@@ -149,5 +156,15 @@ public class AccountAction extends ActionSupport implements SessionAware {
 
 	public void setTransMes(String transMes) {
 		this.transMes = transMes;
+	}
+
+
+	public HttpServletRequest getServletRequest() {
+		return servletRequest;
+	}
+
+
+	public void setServletRequest(HttpServletRequest servletRequest) {
+		this.servletRequest = servletRequest;
 	}
 }

@@ -40,8 +40,10 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> select(String hql, Object... param) {
+		System.out.println("basedao-------------select");
 		return ht.find(hql, param);
 	}
 
